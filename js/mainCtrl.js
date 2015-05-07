@@ -9,12 +9,13 @@ app.controller('mainCtrl', function($scope, itunesService){
       height: '110px',
       sortInfo: {fields: ['Song', 'Artist', 'Collection', 'Type'], directions: ['asc']},
       columnDefs: [
-        {field: 'Play', displayName: 'Play', width: '40px', cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><a href="{{row.getProperty(col.field)}}"><img src="http://www.icty.org/x/image/Miscellaneous/play_icon30x30.png"></a></div>'},
+        {field: 'Play', displayName: 'Play', width: '40px', cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><a href="{{row.getProperty(col.field)}}" target="_blank"><img src="http://www.icty.org/x/image/Miscellaneous/play_icon30x30.png"></a></div>'},
         {field: 'Artist', displayName: 'Artist'},
+        {field: 'Track', displayName: 'Track'},
         {field: 'Collection', displayName: 'Collection'},
         {field: 'AlbumArt', displayName: 'Album Art', width: '110px', cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><img src="{{row.getProperty(col.field)}}"></div>'},
         {field: 'Type', displayName: 'Type'},
-        {field: 'CollectionPrice', displayName: 'Collection Price'},
+        {field: 'TrackPrice', displayName: 'Track Price'},
       ]
   };
 
@@ -22,14 +23,34 @@ app.controller('mainCtrl', function($scope, itunesService){
 
   //First inject itunesService into your controller.
 
-    //code here
-
 
   //Now write a function that will call the method on the itunesService that is responsible for getting the data from iTunes, whenever the user clicks the submit button
   //*remember, that method should be expecting an artist name. The artist name is coming from the input box on index.html, head over there and check if that input box is tied to any specific model we could use.
   //Also note that that method should be retuning a promise, so you could use .then in this function.
     
     //Code here
+  $scope.getSongData = function(artist) {
+    itunesService.getSongs(artist).then(function(data) {
+      var myFinalArray = []
+      //code the array filler here
+      for (var i = 0; i < data.length; i++) {
+        var currentSong = {
+          AlbumArt: data[i].artworkUrl30,
+          Artist: data[i].artistName,
+          Track: data[i].trackName,
+          Collection: data[i].collectionName,
+          TrackPrice: data[i].trackPrice,
+          Play: data[i].previewUrl,
+          Type: data[i].kind
+        }
+        myFinalArray.push(currentSong)
+      };
+
+
+      $scope.songData = myFinalArray
+      console.log(data)
+    })
+  }
 
 
   //Check that the above method is working by entering a name into the input field on your web app, and then console.log the result
